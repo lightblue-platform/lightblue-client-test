@@ -14,6 +14,7 @@ import com.redhat.lightblue.client.request.data.DataInsertRequest;
 import com.redhat.lightblue.test.utils.AbstractCRUDControllerWithRest;
 
 /**
+ * Testing your code against lightblue example.
  *
  * @author mpatercz
  *

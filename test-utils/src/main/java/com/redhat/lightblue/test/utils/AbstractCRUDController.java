@@ -54,6 +54,7 @@ public abstract class AbstractCRUDController {
      * Load contents of resource on classpath as String.
      *
      * @param resourceName
+     * @param local true if should look for resource in lightblue-test-utils.jar
      * @return the resource as a String
      * @throws IOException
      */

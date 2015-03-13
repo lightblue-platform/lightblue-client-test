@@ -11,12 +11,25 @@ import com.redhat.lightblue.rest.crud.CrudResource;
 import com.redhat.lightblue.rest.metadata.MetadataResource;
 import com.sun.net.httpserver.HttpServer;
 
+/**
+ * Utility class for adding rest layer on top of mongo CRUD Controller. Extend this class when writing tests.
+ *
+ * @author mpatercz
+ *
+ */
 public class AbstractCRUDControllerWithRest extends AbstractCRUDController {
 
     protected static HttpServer httpServer = null;
     
     protected static int httpPort = 8000;
 
+    /**
+     * Setup lightblue backend with provided schemas and rest endpoints.
+     *
+     * @param httpServerPort port used for http (rest endpoints)
+     * @param metadataResourcePaths schemas in classpath
+     * @throws Exception
+     */
     protected static void initLightblueFactoryWithRest(int httpServerPort, String... metadataResourcePaths) throws Exception {
     	httpPort = httpServerPort;
     	
@@ -39,6 +52,12 @@ public class AbstractCRUDControllerWithRest extends AbstractCRUDController {
         httpServer.start();
     }
 
+    /**
+     * Setup lightblue backend with provided schemas and rest endpoints on port 8000.
+     *
+     * @param metadataResourcePaths schemas in classpath
+     * @throws Exception
+     */
     protected static void initLightblueFactoryWithRest(String... metadataResourcePaths) throws Exception {
         initLightblueFactoryWithRest(httpPort, metadataResourcePaths);
     }
@@ -49,6 +68,10 @@ public class AbstractCRUDControllerWithRest extends AbstractCRUDController {
 		httpServer.stop(0);
     }
     
+    /**
+     *
+     * @return lightblue http client configuration needed to connect
+     */
     protected static LightblueClientConfiguration getLightblueClientConfiguration() {
 	    LightblueClientConfiguration lbConf = new LightblueClientConfiguration();
 		lbConf.setUseCertAuth(false);
