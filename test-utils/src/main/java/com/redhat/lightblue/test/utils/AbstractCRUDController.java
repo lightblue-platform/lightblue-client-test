@@ -27,26 +27,24 @@ public abstract class AbstractCRUDController {
 
     protected static LightblueFactory lightblueFactory;
 
-    protected static void initLightblueFactory(String... metadataResourcePaths)
-            throws Exception {
+    protected static void initLightblueFactory(String... metadataResourcePaths) throws Exception {
 
         System.setProperty("mongo.host", "localhost");
         System.setProperty("mongo.port", String.valueOf(MongoServerExternalResource.DEFAULT_PORT));
         System.setProperty("mongo.database", "lightblue");
 
-        lightblueFactory = new LightblueFactory(
-                new DataSourcesConfiguration(JsonUtils.json(loadResource("/datasources.json", true))));
+        lightblueFactory = new LightblueFactory(new DataSourcesConfiguration(JsonUtils.json(loadResource("/datasources.json", true))));
 
         JsonTranslator tx = lightblueFactory.getJsonTranslator();
 
         Metadata metadata = lightblueFactory.getMetadata();
-        for(String metadataResourcePath : metadataResourcePaths){
+        for (String metadataResourcePath : metadataResourcePaths) {
             metadata.createNewMetadata(tx.parse(EntityMetadata.class, JsonUtils.json(loadResource(metadataResourcePath, false))));
         }
     }
 
     @AfterClass
-    public static void cleanup(){
+    public static void cleanup() {
         lightblueFactory = null;
     }
 
@@ -54,17 +52,18 @@ public abstract class AbstractCRUDController {
      * Load contents of resource on classpath as String.
      *
      * @param resourceName
-     * @param local true if should look for resource in lightblue-test-utils.jar
+     * @param local
+     *            true if should look for resource in lightblue-test-utils.jar
      * @return the resource as a String
      * @throws IOException
      */
     public static final String loadResource(String resourceName, boolean local) throws IOException {
-	System.out.println("Loading "+resourceName+" "+AbstractCRUDController.class.getResource(resourceName));
+        System.out.println("Loading " + resourceName + " " + AbstractCRUDController.class.getResource(resourceName));
 
-	StringBuilder buff = new StringBuilder();
+        StringBuilder buff = new StringBuilder();
 
-        try (
-			InputStream is = local ? AbstractCRUDController.class.getResourceAsStream(resourceName): AbstractCRUDController.class.getClassLoader().getResourceAsStream(resourceName);
+        try (InputStream is = local ? AbstractCRUDController.class.getResourceAsStream(resourceName) : AbstractCRUDController.class.getClassLoader()
+                .getResourceAsStream(resourceName);
                 InputStreamReader isr = new InputStreamReader(is, Charset.defaultCharset());
                 BufferedReader reader = new BufferedReader(isr)) {
             String line;
@@ -75,6 +74,5 @@ public abstract class AbstractCRUDController {
 
         return buff.toString();
     }
-
 
 }

@@ -26,22 +26,21 @@ public class CountryDAOTest extends AbstractCRUDControllerWithRest {
         initLightblueFactoryWithRest("country.json");
     }
 
+    @Test
+    public void testCountry() throws IOException {
+        LightblueClient client = new LightblueHttpClient(getLightblueClientConfiguration());
 
-	@Test
-	public void testCountry() throws IOException {
-		LightblueClient client = new LightblueHttpClient(getLightblueClientConfiguration());
-		
-		Country c = new Country();
-		c.setName("Poland");
-		c.setIso2Code("PL");
-		c.setIso3Code("POL");								
-		
-		DataInsertRequest request = new DataInsertRequest(Country.objectType, Country.objectVersion);
-        
+        Country c = new Country();
+        c.setName("Poland");
+        c.setIso2Code("PL");
+        c.setIso3Code("POL");
+
+        DataInsertRequest request = new DataInsertRequest(Country.objectType, Country.objectVersion);
+
         request.create(c);
-        request.returns(includeField("*"));        
+        request.returns(includeField("*"));
         Country[] countries = client.data(request, Country[].class);
         Assert.assertEquals("PL", countries[0].getIso2Code());
-	}
+    }
 
 }
