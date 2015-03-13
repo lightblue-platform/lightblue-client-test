@@ -8,6 +8,7 @@ import org.junit.AfterClass;
 import com.redhat.lightblue.client.LightblueClientConfiguration;
 import com.redhat.lightblue.rest.RestConfiguration;
 import com.redhat.lightblue.rest.crud.CrudResource;
+import com.redhat.lightblue.rest.metadata.MetadataResource;
 import com.sun.net.httpserver.HttpServer;
 
 public class AbstractCRUDControllerWithRest extends AbstractCRUDController {
@@ -24,12 +25,16 @@ public class AbstractCRUDControllerWithRest extends AbstractCRUDController {
         RestConfiguration.setFactory(lightblueFactory);
 
         httpServer = HttpServer.create(new InetSocketAddress(httpPort), 0);
-        HttpContextBuilder contextBuilder=new HttpContextBuilder();        
-        contextBuilder.getDeployment().getActualResourceClasses().add(CrudResource.class);
-        contextBuilder.setPath("/rest/data");
-        contextBuilder.bind(httpServer);
         
-        // TODO: setup another context for metadata endpoint
+        HttpContextBuilder dataContext=new HttpContextBuilder();
+        dataContext.getDeployment().getActualResourceClasses().add(CrudResource.class);
+        dataContext.setPath("/rest/data");
+        dataContext.bind(httpServer);
+
+        HttpContextBuilder metadataContext=new HttpContextBuilder();
+        metadataContext.getDeployment().getActualResourceClasses().add(MetadataResource.class);
+        metadataContext.setPath("/rest/metadata");
+        metadataContext.bind(httpServer);
         
         httpServer.start();
     }
