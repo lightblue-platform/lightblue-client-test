@@ -36,13 +36,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- TODO: Had to specify 1.4.0-RC5 explicitly, b/c 1.4.0 - which is included implicitly - does not work. -->
-        <dependency>
-            <groupId>com.netflix.hystrix</groupId>
-            <artifactId>hystrix-core</artifactId>
-            <version>1.4.0-RC5</version>
-        </dependency>
-
     </dependencies>
 
 </project>
