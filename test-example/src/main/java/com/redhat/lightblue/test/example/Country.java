@@ -1,6 +1,8 @@
 package com.redhat.lightblue.test.example;
 
 public class Country {
+	
+	public static final String objectType="country", objectVersion="0.1.0-SNAPSHOT";
 
 	private String name, iso2Code, iso3Code, optionalField;
 

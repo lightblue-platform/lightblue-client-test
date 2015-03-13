@@ -33,6 +33,20 @@
             "value": "0.1.0-SNAPSHOT",
             "changelog": "Initial version"
         },
+        "access": {
+            "delete": [
+                "anyone"
+            ],
+            "find": [
+                "anyone"
+            ],
+            "insert": [
+                "anyone"
+            ],
+            "update": [
+                "anyone"
+            ]
+        },
         "status": {
             "value": "active"
         },

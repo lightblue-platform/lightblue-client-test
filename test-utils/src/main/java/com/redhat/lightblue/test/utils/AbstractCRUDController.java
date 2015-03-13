@@ -9,7 +9,6 @@ import java.nio.charset.Charset;
 import org.junit.AfterClass;
 import org.junit.ClassRule;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.redhat.lightblue.config.DataSourcesConfiguration;
 import com.redhat.lightblue.config.JsonTranslator;
 import com.redhat.lightblue.config.LightblueFactory;
