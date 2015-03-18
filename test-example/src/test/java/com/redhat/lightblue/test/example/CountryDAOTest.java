@@ -1,15 +1,18 @@
 package com.redhat.lightblue.test.example;
 
+import static com.redhat.lightblue.client.expression.query.ValueQuery.withValue;
 import static com.redhat.lightblue.client.projection.FieldProjection.includeField;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.redhat.lightblue.client.LightblueClient;
 import com.redhat.lightblue.client.http.LightblueHttpClient;
+import com.redhat.lightblue.client.request.data.DataFindRequest;
 import com.redhat.lightblue.client.request.data.DataInsertRequest;
 import com.redhat.lightblue.test.utils.AbstractCRUDControllerWithRest;
 
@@ -21,15 +24,19 @@ import com.redhat.lightblue.test.utils.AbstractCRUDControllerWithRest;
  */
 public class CountryDAOTest extends AbstractCRUDControllerWithRest {
 
+    LightblueHttpClient client = getLightblueClient();
+
     @BeforeClass
     public static void beforeClass() throws Exception {
         initLightblueFactoryWithRest("country.json");
     }
 
-    @Test
-    public void testCountry() throws IOException {
-        LightblueClient client = new LightblueHttpClient(getLightblueClientConfiguration());
+    @Before
+    public void before() throws UnknownHostException {
+        cleanupMongoCollections(Country.objectType);
+    }
 
+    private Country insertPL() throws IOException {
         Country c = new Country();
         c.setName("Poland");
         c.setIso2Code("PL");
@@ -39,8 +46,28 @@ public class CountryDAOTest extends AbstractCRUDControllerWithRest {
 
         request.create(c);
         request.returns(includeField("*"));
-        Country[] countries = client.data(request, Country[].class);
-        Assert.assertEquals("PL", countries[0].getIso2Code());
+        return client.data(request, Country[].class)[0];
     }
+
+    @Test
+    public void testInsertCountry() throws IOException {
+        Assert.assertEquals("PL", insertPL().getIso2Code());
+    }
+
+    @Test
+    public void testDirectMongoCleanup() throws IOException {
+        insertPL();
+
+        cleanupMongoCollections(Country.objectType);
+
+        DataFindRequest request = new DataFindRequest(Country.objectType, Country.objectVersion);
+        request.where(withValue("objectType = country"));
+        request.select(includeField("*"));
+        Country[] countries = client.data(request, Country[].class);
+
+        Assert.assertTrue(countries.length == 0);
+    }
+
+
 
 }

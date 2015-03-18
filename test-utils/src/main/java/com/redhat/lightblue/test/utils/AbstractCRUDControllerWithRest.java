@@ -6,6 +6,7 @@ import org.jboss.resteasy.plugins.server.sun.http.HttpContextBuilder;
 import org.junit.AfterClass;
 
 import com.redhat.lightblue.client.LightblueClientConfiguration;
+import com.redhat.lightblue.client.http.LightblueHttpClient;
 import com.redhat.lightblue.rest.RestConfiguration;
 import com.redhat.lightblue.rest.crud.CrudResource;
 import com.redhat.lightblue.rest.metadata.MetadataResource;
@@ -81,5 +82,9 @@ public class AbstractCRUDControllerWithRest extends AbstractCRUDController {
         lbConf.setDataServiceURI("http://localhost:" + httpPort + "/rest/data");
         lbConf.setMetadataServiceURI("http://localhost:" + httpPort + "/rest/metadata");
         return lbConf;
+    }
+
+    protected static LightblueHttpClient getLightblueClient() {
+        return new LightblueHttpClient(getLightblueClientConfiguration());
     }
 }

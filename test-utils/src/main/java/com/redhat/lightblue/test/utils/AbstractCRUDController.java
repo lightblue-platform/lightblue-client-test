@@ -4,11 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 
 import org.junit.AfterClass;
 import org.junit.ClassRule;
 
+import com.mongodb.BasicDBObject;
 import com.redhat.lightblue.config.DataSourcesConfiguration;
 import com.redhat.lightblue.config.JsonTranslator;
 import com.redhat.lightblue.config.LightblueFactory;
@@ -46,6 +48,18 @@ public abstract class AbstractCRUDController {
     @AfterClass
     public static void cleanup() {
         lightblueFactory = null;
+    }
+
+    /**
+     * Remove all documents from specified collections. Useful for cleaning up between tests.
+     *
+     * @param collectionName
+     * @throws UnknownHostException
+     */
+    public static void cleanupMongoCollections(String... collectionNames) throws UnknownHostException {
+        for (String collectionName: collectionNames) {
+            mongoServer.getConnection().getDB(System.getProperty("mongo.database")).getCollection(collectionName).remove(new BasicDBObject());
+        }
     }
 
     /**
