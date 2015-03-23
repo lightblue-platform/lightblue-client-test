@@ -39,7 +39,7 @@ public class CountryDAOTest extends AbstractCRUDControllerWithRest {
 
     @Override
     protected JsonNode[] getMetadataJsonNodes() throws Exception {
-        return new JsonNode[]{loadJsonNode("country.json")};
+        return new JsonNode[]{loadJsonNode("./country.json")};
     }
 
     private Country insertPL() throws IOException {
