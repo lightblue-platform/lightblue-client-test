@@ -1,15 +1,22 @@
 package com.redhat.lightblue.test.utils;
 
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 import org.jboss.resteasy.plugins.server.sun.http.HttpContextBuilder;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 
+import com.mongodb.BasicDBObject;
 import com.redhat.lightblue.client.LightblueClientConfiguration;
 import com.redhat.lightblue.client.http.LightblueHttpClient;
+import com.redhat.lightblue.mongo.test.MongoServerExternalResource;
+import com.redhat.lightblue.mongo.test.MongoServerExternalResource.InMemoryMongoServer;
 import com.redhat.lightblue.rest.RestConfiguration;
 import com.redhat.lightblue.rest.crud.CrudResource;
 import com.redhat.lightblue.rest.metadata.MetadataResource;
+import com.redhat.lightblue.test.AbstractCRUDTestController;
 import com.sun.net.httpserver.HttpServer;
 
 /**
@@ -18,65 +25,83 @@ import com.sun.net.httpserver.HttpServer;
  * @author mpatercz
  *
  */
-public class AbstractCRUDControllerWithRest extends AbstractCRUDController {
+@InMemoryMongoServer
+public abstract class AbstractCRUDControllerWithRest extends AbstractCRUDTestController {
 
-    protected static HttpServer httpServer = null;
+    @ClassRule
+    public static MongoServerExternalResource mongoServer = new MongoServerExternalResource();
 
-    protected static int httpPort = 8000;
+    private final static int DEFAULT_PORT = 8000;
+
+    protected static HttpServer httpServer;
+
+    private final int httpPort;
+
+    @BeforeClass
+    public static void setup() {
+        System.setProperty("mongo.host", "localhost");
+        System.setProperty("mongo.port", String.valueOf(MongoServerExternalResource.DEFAULT_PORT));
+        System.setProperty("mongo.database", "lightblue");
+    }
+
+    @AfterClass
+    public static void stopHttpServer() {
+        if (httpServer != null) {
+            httpServer.stop(0);
+        }
+    }
+
+    public AbstractCRUDControllerWithRest() throws Exception {
+        this(true, DEFAULT_PORT);
+    }
 
     /**
      * Setup lightblue backend with provided schemas and rest endpoints.
      *
      * @param httpServerPort
      *            port used for http (rest endpoints)
-     * @param metadataResourcePaths
-     *            schemas in classpath
      * @throws Exception
      */
-    protected static void initLightblueFactoryWithRest(int httpServerPort, String... metadataResourcePaths) throws Exception {
+    public AbstractCRUDControllerWithRest(boolean loadStatically, int httpServerPort) throws Exception {
+        super(loadStatically);
         httpPort = httpServerPort;
 
-        initLightblueFactory(metadataResourcePaths);
+        if (!loadStatically || httpServer == null) {
+            RestConfiguration.setFactory(lightblueFactory);
 
-        RestConfiguration.setFactory(lightblueFactory);
+            httpServer = HttpServer.create(new InetSocketAddress(httpPort), 0);
 
-        httpServer = HttpServer.create(new InetSocketAddress(httpPort), 0);
+            HttpContextBuilder dataContext = new HttpContextBuilder();
+            dataContext.getDeployment().getActualResourceClasses().add(CrudResource.class);
+            dataContext.setPath("/rest/data");
+            dataContext.bind(httpServer);
 
-        HttpContextBuilder dataContext = new HttpContextBuilder();
-        dataContext.getDeployment().getActualResourceClasses().add(CrudResource.class);
-        dataContext.setPath("/rest/data");
-        dataContext.bind(httpServer);
+            HttpContextBuilder metadataContext = new HttpContextBuilder();
+            metadataContext.getDeployment().getActualResourceClasses().add(MetadataResource.class);
+            metadataContext.setPath("/rest/metadata");
+            metadataContext.bind(httpServer);
 
-        HttpContextBuilder metadataContext = new HttpContextBuilder();
-        metadataContext.getDeployment().getActualResourceClasses().add(MetadataResource.class);
-        metadataContext.setPath("/rest/metadata");
-        metadataContext.bind(httpServer);
-
-        httpServer.start();
+            httpServer.start();
+        }
     }
 
     /**
-     * Setup lightblue backend with provided schemas and rest endpoints on port 8000.
+     * Remove all documents from specified collections. Useful for cleaning up between tests.
      *
-     * @param metadataResourcePaths
-     *            schemas in classpath
-     * @throws Exception
+     * @param collectionName
+     * @throws UnknownHostException
      */
-    protected static void initLightblueFactoryWithRest(String... metadataResourcePaths) throws Exception {
-        initLightblueFactoryWithRest(httpPort, metadataResourcePaths);
-    }
-
-    @AfterClass
-    public static void stopHttpServer() {
-        if (httpServer != null)
-            httpServer.stop(0);
+    public static void cleanupMongoCollections(String... collectionNames) throws UnknownHostException {
+        for (String collectionName : collectionNames) {
+            mongoServer.getConnection().getDB(System.getProperty("mongo.database")).getCollection(collectionName).remove(new BasicDBObject());
+        }
     }
 
     /**
      *
      * @return lightblue http client configuration needed to connect
      */
-    protected static LightblueClientConfiguration getLightblueClientConfiguration() {
+    protected LightblueClientConfiguration getLightblueClientConfiguration() {
         LightblueClientConfiguration lbConf = new LightblueClientConfiguration();
         lbConf.setUseCertAuth(false);
         lbConf.setDataServiceURI("http://localhost:" + httpPort + "/rest/data");
@@ -84,7 +109,8 @@ public class AbstractCRUDControllerWithRest extends AbstractCRUDController {
         return lbConf;
     }
 
-    protected static LightblueHttpClient getLightblueClient() {
+    protected LightblueHttpClient getLightblueClient() {
         return new LightblueHttpClient(getLightblueClientConfiguration());
     }
+
 }
