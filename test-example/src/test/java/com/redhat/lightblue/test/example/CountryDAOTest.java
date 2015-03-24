@@ -2,15 +2,16 @@ package com.redhat.lightblue.test.example;
 
 import static com.redhat.lightblue.client.expression.query.ValueQuery.withValue;
 import static com.redhat.lightblue.client.projection.FieldProjection.includeField;
+import static com.redhat.lightblue.util.test.AbstractJsonNodeTest.loadJsonNode;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.redhat.lightblue.client.http.LightblueHttpClient;
 import com.redhat.lightblue.client.request.data.DataFindRequest;
 import com.redhat.lightblue.client.request.data.DataInsertRequest;
@@ -24,16 +25,21 @@ import com.redhat.lightblue.test.utils.AbstractCRUDControllerWithRest;
  */
 public class CountryDAOTest extends AbstractCRUDControllerWithRest {
 
-    LightblueHttpClient client = getLightblueClient();
-
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        initLightblueFactoryWithRest("country.json");
-    }
+    private LightblueHttpClient client;
 
     @Before
     public void before() throws UnknownHostException {
+        client = getLightblueClient();
         cleanupMongoCollections(Country.objectType);
+    }
+
+    public CountryDAOTest() throws Exception {
+        super();
+    }
+
+    @Override
+    protected JsonNode[] getMetadataJsonNodes() throws Exception {
+        return new JsonNode[]{loadJsonNode("country.json")};
     }
 
     private Country insertPL() throws IOException {
@@ -67,7 +73,5 @@ public class CountryDAOTest extends AbstractCRUDControllerWithRest {
 
         Assert.assertTrue(countries.length == 0);
     }
-
-
 
 }
