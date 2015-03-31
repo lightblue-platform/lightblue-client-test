@@ -67,7 +67,7 @@ public abstract class AbstractCRUDControllerWithRest extends AbstractCRUDTestCon
         httpPort = httpServerPort;
 
         if (!loadStatically || httpServer == null) {
-            RestConfiguration.setFactory(lightblueFactory);
+            RestConfiguration.setFactory(getLightblueFactory());
 
             httpServer = HttpServer.create(new InetSocketAddress(httpPort), 0);
 
