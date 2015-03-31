@@ -50,7 +50,7 @@ public abstract class AbstractCRUDControllerWithRest extends AbstractMongoCRUDTe
         httpPort = httpServerPort;
 
         if (httpServer == null) {
-            RestConfiguration.setFactory(lightblueFactory);
+            RestConfiguration.setFactory(getLightblueFactory());
 
             httpServer = HttpServer.create(new InetSocketAddress(httpPort), 0);
 
