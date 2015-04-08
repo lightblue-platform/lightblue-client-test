@@ -23,7 +23,7 @@
     <groupId>com.redhat.lightblue.test</groupId>
     <artifactId>lightblue-test-example</artifactId>
     <name>lightblue-test-example: ${project.groupId}|${project.artifactId}</name>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.4.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>An example on how to test applications against Lightblue</description>
 
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>com.redhat.lightblue.test</groupId>
             <artifactId>lightblue-test-utils</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
+            <version>1.4.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
 
