@@ -65,6 +65,11 @@
             <artifactId>lightblue-client-http</artifactId>
             <version>1.3.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.redhat.lightblue.client</groupId>
+            <artifactId>lightblue-client-test</artifactId>
+            <version>1.3.0-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
