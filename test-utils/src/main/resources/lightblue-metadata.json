@@ -1,6 +1,0 @@
-{
-    "validateRequests" : false,
-    "type": "com.redhat.lightblue.mongo.config.MongoMetadataConfiguration",
-    "dataSource": "mongo",
-    "collection": "metadata"
-}
