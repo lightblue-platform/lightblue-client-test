@@ -1,17 +1,10 @@
 package com.redhat.lightblue.test.utils;
 
-import static org.junit.Assert.assertFalse;
-
-import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import org.jboss.resteasy.plugins.server.sun.http.HttpContextBuilder;
 import org.junit.AfterClass;
 
-import com.redhat.lightblue.client.LightblueClientConfiguration;
-import com.redhat.lightblue.client.http.LightblueHttpClient;
-import com.redhat.lightblue.client.response.LightblueResponse;
-import com.redhat.lightblue.client.test.request.DataInsertRequestStub;
 import com.redhat.lightblue.mongo.test.AbstractMongoCRUDTestController;
 import com.redhat.lightblue.rest.RestConfiguration;
 import com.redhat.lightblue.rest.crud.CrudResource;
@@ -69,8 +62,6 @@ public abstract class AbstractCRUDControllerWithRest extends AbstractMongoCRUDTe
         httpPort = httpServerPort;
         dataUrl = "http://localhost:" + httpPort + "/rest/data";
         metadataUrl = "http://localhost:" + httpPort + "/rest/metadata";
-        System.setProperty("client.data.url", getDataUrl());
-        System.setProperty("client.metadata.url", getMetadataUrl());
 
         if (httpServer == null) {
             RestConfiguration.setFactory(getLightblueFactory());
@@ -89,30 +80,5 @@ public abstract class AbstractCRUDControllerWithRest extends AbstractMongoCRUDTe
 
             httpServer.start();
         }
-    }
-
-    /**
-     *
-     * @return lightblue http client configuration needed to connect
-     */
-    protected LightblueClientConfiguration getLightblueClientConfiguration() {
-        LightblueClientConfiguration lbConf = new LightblueClientConfiguration();
-        lbConf.setUseCertAuth(false);
-        lbConf.setDataServiceURI(getDataUrl());
-        lbConf.setMetadataServiceURI(getMetadataUrl());
-        return lbConf;
-    }
-
-    protected LightblueHttpClient getLightblueClient() {
-        return new LightblueHttpClient(getLightblueClientConfiguration());
-    }
-
-    protected LightblueResponse loadData(String entityName, String entityVersion, String resourcePath) throws IOException {
-        DataInsertRequestStub request = new DataInsertRequestStub(
-                entityName, entityVersion, loadResource(resourcePath, false));
-        LightblueResponse response = getLightblueClient().data(request);
-        assertFalse(response.getText(), response.hasError());
-
-        return response;
     }
 }
