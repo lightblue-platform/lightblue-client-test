@@ -31,12 +31,26 @@ public abstract class AbstractCRUDControllerWithRest extends AbstractMongoCRUDTe
     private static HttpServer httpServer;
 
     private final int httpPort;
+    private final String dataUrl;
+    private final String metadataUrl;
 
     @AfterClass
     public static void stopHttpServer() {
         if (httpServer != null) {
             httpServer.stop(0);
         }
+    }
+
+    public int getHttpPort() {
+        return httpPort;
+    }
+
+    public String getDataUrl() {
+        return dataUrl;
+    }
+
+    public String getMetadataUrl() {
+        return metadataUrl;
     }
 
     public AbstractCRUDControllerWithRest() throws Exception {
@@ -53,6 +67,10 @@ public abstract class AbstractCRUDControllerWithRest extends AbstractMongoCRUDTe
     public AbstractCRUDControllerWithRest(int httpServerPort) throws Exception {
         super();
         httpPort = httpServerPort;
+        dataUrl = "http://localhost:" + httpPort + "/rest/data";
+        metadataUrl = "http://localhost:" + httpPort + "/rest/metadata";
+        System.setProperty("client.data.url", getDataUrl());
+        System.setProperty("client.metadata.url", getMetadataUrl());
 
         if (httpServer == null) {
             RestConfiguration.setFactory(getLightblueFactory());
@@ -80,8 +98,8 @@ public abstract class AbstractCRUDControllerWithRest extends AbstractMongoCRUDTe
     protected LightblueClientConfiguration getLightblueClientConfiguration() {
         LightblueClientConfiguration lbConf = new LightblueClientConfiguration();
         lbConf.setUseCertAuth(false);
-        lbConf.setDataServiceURI("http://localhost:" + httpPort + "/rest/data");
-        lbConf.setMetadataServiceURI("http://localhost:" + httpPort + "/rest/metadata");
+        lbConf.setDataServiceURI(getDataUrl());
+        lbConf.setMetadataServiceURI(getMetadataUrl());
         return lbConf;
     }
 
