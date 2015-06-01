@@ -17,6 +17,8 @@ import com.redhat.lightblue.mongo.test.AbstractMongoCRUDTestController;
 import com.redhat.lightblue.rest.RestConfiguration;
 import com.redhat.lightblue.rest.crud.CrudResource;
 import com.redhat.lightblue.rest.metadata.MetadataResource;
+import com.restcompress.provider.LZFDecodingInterceptor;
+import com.restcompress.provider.LZFEncodingInterceptor;
 import com.sun.net.httpserver.HttpServer;
 
 /**
@@ -81,11 +83,15 @@ public abstract class AbstractCRUDControllerWithRest extends AbstractMongoCRUDTe
 
             HttpContextBuilder dataContext = new HttpContextBuilder();
             dataContext.getDeployment().getActualResourceClasses().add(CrudResource.class);
+            dataContext.getDeployment().getActualProviderClasses().add(LZFEncodingInterceptor.class);
+            dataContext.getDeployment().getActualProviderClasses().add(LZFDecodingInterceptor.class);
             dataContext.setPath("/rest/data");
             dataContext.bind(httpServer);
 
             HttpContextBuilder metadataContext = new HttpContextBuilder();
             metadataContext.getDeployment().getActualResourceClasses().add(MetadataResource.class);
+            metadataContext.getDeployment().getActualProviderClasses().add(LZFEncodingInterceptor.class);
+            metadataContext.getDeployment().getActualProviderClasses().add(LZFDecodingInterceptor.class);
             metadataContext.setPath("/rest/metadata");
             metadataContext.bind(httpServer);
 
@@ -102,7 +108,6 @@ public abstract class AbstractCRUDControllerWithRest extends AbstractMongoCRUDTe
         lbConf.setUseCertAuth(false);
         lbConf.setDataServiceURI(getDataUrl());
         lbConf.setMetadataServiceURI(getMetadataUrl());
-        lbConf.setCompression(Compression.NONE);
         return lbConf;
     }
 
