@@ -111,11 +111,11 @@ public abstract class AbstractCRUDControllerWithRest extends AbstractMongoCRUDTe
         return lbConf;
     }
 
-    protected LightblueHttpClient getLightblueClient() {
+    public LightblueHttpClient getLightblueClient() {
         return new LightblueHttpClient(getLightblueClientConfiguration());
     }
 
-    protected LightblueResponse loadData(String entityName, String entityVersion, String resourcePath) throws IOException {
+    public LightblueResponse loadData(String entityName, String entityVersion, String resourcePath) throws IOException {
         DataInsertRequestStub request = new DataInsertRequestStub(
                 entityName, entityVersion, loadResource(resourcePath, false));
         LightblueResponse response = getLightblueClient().data(request);
