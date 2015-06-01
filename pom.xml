@@ -38,7 +38,6 @@
 
     <modules>
         <module>test-utils</module>
-        <module>test-example</module>
     </modules>
 
 </project>
