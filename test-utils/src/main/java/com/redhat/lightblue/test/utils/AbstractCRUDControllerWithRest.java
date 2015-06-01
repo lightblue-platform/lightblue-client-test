@@ -9,6 +9,7 @@ import org.jboss.resteasy.plugins.server.sun.http.HttpContextBuilder;
 import org.junit.AfterClass;
 
 import com.redhat.lightblue.client.LightblueClientConfiguration;
+import com.redhat.lightblue.client.LightblueClientConfiguration.Compression;
 import com.redhat.lightblue.client.http.LightblueHttpClient;
 import com.redhat.lightblue.client.response.LightblueResponse;
 import com.redhat.lightblue.client.test.request.DataInsertRequestStub;
@@ -101,6 +102,7 @@ public abstract class AbstractCRUDControllerWithRest extends AbstractMongoCRUDTe
         lbConf.setUseCertAuth(false);
         lbConf.setDataServiceURI(getDataUrl());
         lbConf.setMetadataServiceURI(getMetadataUrl());
+        lbConf.setCompression(Compression.NONE);
         return lbConf;
     }
 
