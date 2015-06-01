@@ -32,6 +32,7 @@ public abstract class AbstractCRUDControllerWithRest extends AbstractMongoCRUDTe
         if (httpServer != null) {
             httpServer.stop(0);
         }
+        httpServer = null;
     }
 
     public int getHttpPort() {
@@ -81,4 +82,5 @@ public abstract class AbstractCRUDControllerWithRest extends AbstractMongoCRUDTe
             httpServer.start();
         }
     }
+
 }
